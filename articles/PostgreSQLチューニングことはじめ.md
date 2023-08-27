@@ -1,11 +1,16 @@
-サポート終了が2024年で、まだまだ使用されていそうなPostgreSQL 12を対象にしました。
-(参考)https://oss-db.jp/outline/silver#questionnaire_range_silver
+インターンで初めて、PosgreSQLのチューニングをすることになったので、
+使えそうなの列挙していきます。
 
-インターンで初PosgreSQLチューニングをすることになったので、
-チューニングに使えそうなの列挙していきます。
+サポート終了が2024年で、まだまだ使用されていそうなPostgreSQL 12を対象にしました。
+
+(参考)
+
+https://oss-db.jp/outline/silver#questionnaire_range_silver
 
 ## 実行計画
-(参考)https://www.postgresql.jp/document/12/html/sql-explain.html
+(参考)
+
+https://www.postgresql.jp/document/12/html/sql-explain.html
 
 SQLの基本的なチューニングに使う。
 実行計画で時間がかかっていそうなところに注力したい。
@@ -39,8 +44,11 @@ rowsが低くてもcostが高いと1回あたりの処理に時間がかかる�
 結合処理のNested Loop,Hash,Mergeの特性がわかっていると触りやすいかも。
 
 ## ANALYZE,VACUUM
-(参考)https://www.postgresql.jp/document/12/html/sql-analyze.html
-(参考)https://www.postgresql.jp/document/12/html/sql-vacuum.html
+(参考)
+
+https://www.postgresql.jp/document/12/html/sql-analyze.html
+
+https://www.postgresql.jp/document/12/html/sql-vacuum.html
 
 ANALYZEは、適切な実行計画のために必要な、実データの格納状況について統計を取得する。
 VACUUMは、deleteやupdateで不要になった行を、物理的に削除する。
@@ -55,8 +63,11 @@ VACUUM ANALYZE /* table_name */ /* column_name */;
 ```
 
 ## システムカタログ
-(参考)https://www.postgresql.jp/document/12/html/catalogs-overview.html
-(参考)https://oss-db.jp/outline/gold/v2#questionnaire_range_gold
+(参考)
+
+https://www.postgresql.jp/document/12/html/catalogs-overview.html
+
+https://oss-db.jp/outline/gold/v2#questionnaire_range_gold
 
 公式ドキュメントより
 > システムカタログとは、リレーショナルデータベース管理システムがテーブルや列の情報などのスキーマメタデータと内部的な情報を格納する場所です。
@@ -64,9 +75,11 @@ VACUUM ANALYZE /* table_name */ /* column_name */;
 以下、チューニングに使えそうなもの書いていく。
 
 ### pg_statistics
-(参考)https://www.postgresql.jp/document/12/html/catalog-pg-statistic.html
-(参考)https://www.postgresql.jp/document/12/html/view-pg-stats.html
-(参考)https://www.slideshare.net/nttdata-tech/postgresql-monitoring-features-ntt-data
+(参考)
+
+https://www.postgresql.jp/document/12/html/catalog-pg-statistic.html
+
+https://www.postgresql.jp/document/12/html/view-pg-stats.html
 
 ANALYZEを実行した結果が格納される。
 
@@ -80,14 +93,19 @@ statistics(統計情報)の名の通り、一般に言う統計をテーブル�
 全力でチューニングしたい時は、中のデータの分布を知っておかないと適切な索引や実行計画が選べない。
 
 ### pg_locks
-(参考)https://www.postgresql.jp/docs/12/view-pg-locks.html
+(参考)
+
+https://www.postgresql.jp/docs/12/view-pg-locks.html
 
 現在発生中のロック状況が見れる。
 表レベル、行レベルなどロックの種類を知っておくと幸せそう。
 大きすぎるロックは事故の原因。
+デッドロックは処理の順番を見直す必要がありそう。
 
 ### 統計情報コレクタ
-(参考)https://www.postgresql.jp/document/12/html/monitoring-stats.html
+(参考)
+
+https://www.postgresql.jp/document/12/html/monitoring-stats.html
 
 テーブルの統計情報と違う性質の統計情報。
 例えばpg_stat_databaseでは、データベース上のトランザクションの実行回数、キャッシュヒットブロック数などが見れる。
@@ -107,13 +125,17 @@ statistics(統計情報)の名の通り、一般に言う統計をテーブル�
 > pg_stat_progress_vacuum
 
 ## ヒント句
-(参考)https://pghintplan.osdn.jp/pg_hint_plan-ja.html
+(参考)
+
+https://pghintplan.osdn.jp/pg_hint_plan-ja.html
 
 オプティマイザが言う事聞かないとき、祈りながらつけるやつ。
 公式ではなく、外部モジュールな点に注意。
 
 ## insert,updateのオーバーヘッド
-(参考)https://www.postgresql.jp/document/12/html/populate.html
+(参考)
+
+https://www.postgresql.jp/document/12/html/populate.html
 
 データ移行など、insert,updateが頻繁に走るときは、オーバーヘッドを減らすべし。
 オーバーヘッドは具体的には、
@@ -130,11 +152,14 @@ statistics(統計情報)の名の通り、一般に言う統計をテーブル�
 時間あれば書籍読み返したい。
 
 https://www.shoeisha.co.jp/book/detail/9784798157825#contents
+
 https://www.shoeisha.co.jp/book/detail/9784798128931#contents
+
 https://gihyo.jp/book/2019/978-4-297-10408-5/#toc
+
 https://www.oreilly.co.jp/books/9784873115894/#toc
 
 ### スライド
 色々あると思いますがとりあえず道中で見つけたやつ。
 
-https://www.slideshare.net/nttdata-tech/postgresql-monitoring-features-ntt-data 
+https://www.slideshare.net/nttdata-tech/postgresql-monitoring-features-ntt-data
